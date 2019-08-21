@@ -4,12 +4,14 @@
 target 'FlickrImages' do
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
-
-  # Pods for FlickrImages
+ 	pod 'RxSwift', '~> 5'
+    pod 'RxCocoa', '~> 5'
 
   target 'FlickrImagesTests' do
     inherit! :search_paths
-    # Pods for testing
+    pod 'RxBlocking', '~> 5'
+    pod 'RxTest', '~> 5'
+    pod 'Kingfisher', '~> 5.0'
   end
 
 end
