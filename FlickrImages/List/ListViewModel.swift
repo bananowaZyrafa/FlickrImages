@@ -10,9 +10,11 @@ protocol ListViewModelType {
 
 final class ListViewModel: ListViewModelType {
     struct Input {
+        let ready: Driver<Void>
     }
 
     struct Output {
+        let flickrItems: Driver<[FlickrItem]>
     }
 
     struct Dependencies {
@@ -26,7 +28,12 @@ final class ListViewModel: ListViewModelType {
     }
 
     func transform(input: Input) -> Output {
-
-        return Output()
+        let items = input.ready.flatMap { _ in
+            self.dependencies
+                .networking
+                .fetchDefaultList()
+                .asDriver(onErrorJustReturn: [])
+        }
+        return Output(flickrItems: items)
     }
 }

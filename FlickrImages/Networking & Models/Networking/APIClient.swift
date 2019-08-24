@@ -82,6 +82,7 @@ final class APIClient: APIClientType {
     private func parseObservable<T: Decodable>(data: Data) -> Single<T> {
         return Single.create { single in
             let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .formatted(.dateFormatter)
             do {
                 let decodedData = try decoder.decode(T.self, from: data)
                 single(.success(decodedData))

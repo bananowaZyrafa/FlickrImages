@@ -4,12 +4,15 @@ import Kingfisher
 
 class ListImageCell: UITableViewCell {
 
-    override var reuseIdentifier: String? { return "ListImageCell" }
+    public var cellIdentifier: String {
+        return reuseIdentifier ?? "ListImageCell"
+    }
 
     private let flickrImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 8
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
@@ -21,7 +24,12 @@ class ListImageCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        if selected {
+            setSelected(false, animated: true)
+        }
+        return
+    }
     private func setup() {
         contentView.addSubview(flickrImageView)
         flickrImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -35,5 +43,14 @@ class ListImageCell: UITableViewCell {
             flickrImageView.bottomAnchor.constraint(equalTo: margins.bottomAnchor)
             ])
     }
-    
+
+    public func configure(with flickrItem: FlickrItem) {
+        flickrImageView.kf.setImage(
+            with: flickrItem.media.imageURL,
+            placeholder: UIImage(named: "placeholder"),
+            options: [
+                .transition(.fade(1)),
+                .cacheMemoryOnly
+            ])
+    }
 }

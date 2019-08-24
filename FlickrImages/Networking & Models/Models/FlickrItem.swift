@@ -4,15 +4,22 @@ struct FlickrItem: Decodable {
     let title: String
     let link: String
     let media: Media
-    let dateTaken: String
+    let dateTaken: Date
     let description: String
-    let publishedDate: String
+    let publishedDate: Date
     let author: String
     let authorID: String
     let tags: String
 
     struct Media: Codable {
-        let m: String
+        private let urlString: String
+        public var imageURL: URL? {
+            return URL(string: urlString)
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case urlString = "m"
+        }
     }
 
     enum CodingKeys: String, CodingKey {
@@ -26,6 +33,4 @@ struct FlickrItem: Decodable {
         case authorID = "author_id"
         case tags
     }
-
 }
-
