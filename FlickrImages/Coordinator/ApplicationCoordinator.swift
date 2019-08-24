@@ -23,6 +23,7 @@ class ApplicationCoordinator: Coordinator {
         let navigationController = UINavigationController()
         let listViewModel = ListViewModel(dependencies: ListViewModel.Dependencies(networking: dependencies.apiClient))
         let listViewController = ListViewController(viewModel: listViewModel)
+        listViewController.view.backgroundColor = .white
 
         navigationController.viewControllers = [listViewController]
         self.navigationController = navigationController

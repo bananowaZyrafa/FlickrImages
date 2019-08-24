@@ -5,6 +5,16 @@ import RxCocoa
 class ListViewController: UIViewController {
 
     private let viewModel: ListViewModel
+    private lazy var tableView = UITableView()
+    private lazy var searchController: UISearchController = {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = "Filter images by tag"
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchResultsUpdater = nil
+        searchController.dimsBackgroundDuringPresentation = false
+        searchController.searchBar.searchBarStyle = .minimal
+        return searchController
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,6 +27,15 @@ class ListViewController: UIViewController {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.frame = view.bounds
+        navigationItem.titleView = searchController.searchBar
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: nil)
+//        definesPresentationContext = true
+
     }
 
 }
