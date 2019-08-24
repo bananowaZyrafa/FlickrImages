@@ -5,7 +5,11 @@ import RxCocoa
 class ListViewController: UIViewController {
 
     private let viewModel: ListViewModel
-    private lazy var tableView = UITableView()
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.rowHeight = 120
+        return tableView
+    }()
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = "Filter images by tag"
