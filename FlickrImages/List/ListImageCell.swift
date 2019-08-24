@@ -24,12 +24,7 @@ class ListImageCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        if selected {
-            setSelected(false, animated: true)
-        }
-        return
-    }
+    
     private func setup() {
         contentView.addSubview(flickrImageView)
         flickrImageView.translatesAutoresizingMaskIntoConstraints = false

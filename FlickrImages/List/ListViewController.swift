@@ -7,6 +7,10 @@ class ListViewController: UIViewController {
     private let viewModel: ListViewModel
     private let disposeBag = DisposeBag()
 
+    private lazy var rightBarButtonItem: UIBarButtonItem = {
+        return UIBarButtonItem(barButtonSystemItem: .action, target: self, action: nil)
+    }()
+
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.contentInsetAdjustmentBehavior = .automatic
@@ -29,6 +33,7 @@ class ListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(tableView)
+        viewModel.fetchList()
         bindViewModel()
     }
 
@@ -45,21 +50,39 @@ class ListViewController: UIViewController {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
         navigationItem.titleView = searchController.searchBar
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: nil)
+        navigationItem.rightBarButtonItem = rightBarButtonItem
 //        definesPresentationContext = true
 
     }
 
     private func bindViewModel() {
-        let input = ListViewModel.Input(ready: rx.viewWillAppear.asDriver())
+        let tableViewSelected = tableView
+            .rx
+            .itemSelected
+            .asDriver()
+
+        let input = ListViewModel.Input(ready: rx.viewWillAppear.asDriver(), selectedIndex: tableViewSelected, sortByDate: rightBarButtonItem.rx.tap.asDriver(onErrorJustReturn: ()))
         let output = viewModel.transform(input: input)
 
         output
-            .flickrItems
-            .drive(tableView.rx.items(cellIdentifier: ListImageCell.reuseIdentifier, cellType: ListImageCell.self)) { (row, element, cell) in
+            .items
+            .drive(tableView
+                .rx
+                .items(cellIdentifier: ListImageCell.reuseIdentifier, cellType: ListImageCell.self)) {
+                (row, element, cell) in
                 cell.configure(with: element)
             }
             .disposed(by: disposeBag)
+
+        output
+            .selectedItem
+            .drive(onNext: { [weak self] (indexPath) in
+                self?.tableView.deselectRow(at: indexPath, animated: false)
+            })
+            .disposed(by: disposeBag)
+
+
+
     }
 
 }
