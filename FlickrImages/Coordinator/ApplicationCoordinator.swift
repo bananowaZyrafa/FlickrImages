@@ -30,17 +30,14 @@ class ApplicationCoordinator: Coordinator {
         let navigationController = UINavigationController()
         let listViewModel = ListViewModel(dependencies: ListViewModel.Dependencies(networking: dependencies.apiClient))
         let listViewController = ListViewController(viewModel: listViewModel)
-        listViewController.view.backgroundColor = .white
 
         navigationController.viewControllers = [listViewController]
         self.navigationController = navigationController
 
-        presentDetails.subscribe(onNext: { (flickrItem) in
-            guard let item = flickrItem else { return }
-            self.presentDetails(of: item)
-        }).disposed(by: disposeBag)
-
-        listViewModel.presentItem.asObservable().bind(to: presentDetails).disposed(by: disposeBag)
+        listViewController.view.backgroundColor = .white
+        listViewController.didSelectFlickrItem = { [unowned self] flickrItem in
+            self.presentDetails(of: flickrItem)
+        }
     }
 
 
