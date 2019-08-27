@@ -2,7 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class ListViewController: UIViewController {
+final class ListViewController: UIViewController {
     private let viewModel: ListViewModelType
     private let disposeBag = DisposeBag()
 

@@ -19,15 +19,26 @@ final class APIClient: APIClientType {
 
     private enum APIError: Error {
         case invalidURL
-        case parsingError
         case invalidResponseType
         case JSONSerializationError
         case invalidDataReceived
-        case unknownError
+
+        var localizedDescription: String {
+            switch self {
+            case .invalidURL:
+                return "Invalid URL address error occured."
+            case .invalidResponseType:
+                return "Invalid response type error occured."
+            case .JSONSerializationError:
+                return "JSON serialization error occured."
+            case .invalidDataReceived:
+                return "Invalid data received from the served."
+            }
+        }
     }
 
     func fetchDefaultList() -> Single<[FlickrItem]> {
-        return fetchData(from: EndpointURL.baseURL, with: ["nojsoncallback": "1",
+        return fetchData(from: EndpointURL.baseURL, withParams: ["nojsoncallback": "1",
                                                            "format": "json"])
             .flatMap{ [weak self] data -> Single<FlickrFeed> in
                 return self?.parseObservable(data: data) ?? Single.just(FlickrFeed.emptyFlickrFeed)
@@ -35,7 +46,7 @@ final class APIClient: APIClientType {
             .map{$0.items}
     }
 
-    private func fetchData(from url: URL, with params: [String: String] = [:]) -> Single<Data> {
+    private func fetchData(from url: URL, withParams params: [String: String] = [:]) -> Single<Data> {
         return Single.create { [unowned self] single in
             let queryItems = params.map { parameter in
                 URLQueryItem(name: parameter.key, value: parameter.value)
