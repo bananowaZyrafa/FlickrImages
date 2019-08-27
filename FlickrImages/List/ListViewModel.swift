@@ -10,6 +10,7 @@ protocol ListViewModelType {
 
 final class ListViewModel: ListViewModelType {
     private let fetchedItems: BehaviorRelay<[FlickrItem]> = BehaviorRelay(value: [])
+    public var presentItem: Driver<FlickrItem?> = . just(nil)
 
     private let disposeBag = DisposeBag()
     struct Input {
@@ -20,7 +21,7 @@ final class ListViewModel: ListViewModelType {
 
     struct Output {
         let items: Driver<[FlickrItem]>
-        let selectedItem: Driver<IndexPath>
+        let selectedIndex: Driver<IndexPath>
     }
 
     struct Dependencies {
@@ -47,10 +48,15 @@ final class ListViewModel: ListViewModelType {
                 }.asDriver(onErrorJustReturn: [])
         }
         
-        let merged = Driver.merge(items,sortedItems).asObservable().asDriver(onErrorJustReturn: [])
+        let merged = Driver.merge(items,sortedItems).asDriver(onErrorJustReturn: [])
 
         let selectedIndex = input.selectedIndex
-        return Output(items: merged, selectedItem: selectedIndex)
+
+        presentItem = input.selectedIndex.withLatestFrom(merged) { (indexPath, items) in
+            return items[indexPath.row]
+            }
+
+        return Output(items: merged, selectedIndex: selectedIndex)
     }
 
     func fetchList() {

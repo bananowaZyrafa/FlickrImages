@@ -1,15 +1,18 @@
 import Foundation
 import UIKit
 import RxSwift
+import RxCocoa
 
 protocol Coordinator: class {
     var rootViewController: UIViewController { get }
 }
 
 class ApplicationCoordinator: Coordinator {
+
     private let disposeBag = DisposeBag()
 
     private let dependencies: Dependencies
+
     var rootViewController: UIViewController {
         return navigationController
     }
@@ -18,6 +21,8 @@ class ApplicationCoordinator: Coordinator {
     struct Dependencies {
         let apiClient: APIClientType
     }
+
+    private let presentDetails: PublishSubject<FlickrItem?> = PublishSubject()
 
     init(dependencies: Dependencies) {
         self.dependencies = dependencies
@@ -30,15 +35,16 @@ class ApplicationCoordinator: Coordinator {
         navigationController.viewControllers = [listViewController]
         self.navigationController = navigationController
 
-//        dependencies.apiClient.fetchDefaultList().subscribe(onSuccess: { (items) in
-//            print("items: \(items)")
-//        }) { (error) in
-//            print("error: \(error)")
-//        }.disposed(by: disposeBag)
+        presentDetails.subscribe(onNext: { (flickrItem) in
+            guard let item = flickrItem else { return }
+            self.presentDetails(of: item)
+        }).disposed(by: disposeBag)
+
+        listViewModel.presentItem.asObservable().bind(to: presentDetails).disposed(by: disposeBag)
     }
 
 
-    private func presentDetails() {
+    private func presentDetails(of item: FlickrItem) {
         let detailsViewController = DetailsViewController()
         navigationController.pushViewController(detailsViewController, animated: true)
     }

@@ -75,13 +75,11 @@ class ListViewController: UIViewController {
             .disposed(by: disposeBag)
 
         output
-            .selectedItem
+            .selectedIndex
             .drive(onNext: { [weak self] (indexPath) in
                 self?.tableView.deselectRow(at: indexPath, animated: false)
             })
             .disposed(by: disposeBag)
-
-
 
     }
 
