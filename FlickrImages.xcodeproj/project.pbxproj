@@ -24,6 +24,7 @@
 		C6DFA1F8230D686E00974F16 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C6DFA1F7230D686E00974F16 /* Assets.xcassets */; };
 		C6DFA1FB230D686E00974F16 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6DFA1F9230D686E00974F16 /* LaunchScreen.storyboard */; };
 		C6DFA206230D686E00974F16 /* FlickrImagesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6DFA205230D686E00974F16 /* FlickrImagesTests.swift */; };
+		C6EA30042316F8AE0036732B /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6EA30032316F8AE0036732B /* MenuView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		C6DFA201230D686E00974F16 /* FlickrImagesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlickrImagesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6DFA205230D686E00974F16 /* FlickrImagesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlickrImagesTests.swift; sourceTree = "<group>"; };
 		C6DFA207230D686E00974F16 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C6EA30032316F8AE0036732B /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		FABCA1AD0B12C6EB625482FA /* Pods_FlickrImagesTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FlickrImagesTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -125,6 +127,7 @@
 				C6DFA1F2230D686D00974F16 /* ListViewController.swift */,
 				C60FFDEF2311479E00BA7E3E /* ListViewModel.swift */,
 				C60FFDF92311739B00BA7E3E /* ListImageCell.swift */,
+				C6EA30032316F8AE0036732B /* MenuView.swift */,
 			);
 			path = List;
 			sourceTree = "<group>";
@@ -407,6 +410,7 @@
 				C60FFDF02311479E00BA7E3E /* ListViewModel.swift in Sources */,
 				C60FFDFD2311795B00BA7E3E /* DateFormatter+Extensions.swift in Sources */,
 				C617195D230EF6B000D86F1B /* FlickrFeed.swift in Sources */,
+				C6EA30042316F8AE0036732B /* MenuView.swift in Sources */,
 				C60FFDFF2311840100BA7E3E /* UIViewController+Extensions.swift in Sources */,
 				C6171961230F075E00D86F1B /* APIClient.swift in Sources */,
 				C60FFDFA2311739B00BA7E3E /* ListImageCell.swift in Sources */,

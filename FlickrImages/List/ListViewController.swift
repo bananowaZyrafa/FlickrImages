@@ -6,10 +6,6 @@ final class ListViewController: UIViewController {
     private let viewModel: ListViewModelType
     private let disposeBag = DisposeBag()
 
-    private lazy var rightBarButtonItem: UIBarButtonItem = {
-        return UIBarButtonItem(barButtonSystemItem: .action, target: self, action: nil)
-    }()
-
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.contentInsetAdjustmentBehavior = .automatic
@@ -31,6 +27,8 @@ final class ListViewController: UIViewController {
         searchController.searchBar.searchBarStyle = .minimal
         return searchController
     }()
+
+    private let menuView = MenuView()
 
     var didSelectFlickrItem: (FlickrItem) -> Void = { _ in }
 
@@ -54,7 +52,6 @@ final class ListViewController: UIViewController {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
         navigationItem.titleView = searchController.searchBar
-        navigationItem.rightBarButtonItem = rightBarButtonItem
         definesPresentationContext = true
     }
 
@@ -63,15 +60,6 @@ final class ListViewController: UIViewController {
             .drive(onNext: { [weak self] state in
                 self?.render(with: state)
             })
-            .disposed(by: disposeBag)
-
-        rightBarButtonItem
-            .rx
-            .tap
-            .flatMap { _ -> Observable<ListViewModel.ItemsModifyState> in
-                return .just(ListViewModel.ItemsModifyState.orderedByDatePublished)
-            }
-            .bind(to: viewModel.modifyItemsObservable)
             .disposed(by: disposeBag)
 
         searchController
@@ -92,7 +80,23 @@ final class ListViewController: UIViewController {
             .flatMap { tag -> Observable<ListViewModel.ItemsModifyState> in
                 var searchTag = ""
                 searchTag = tag ?? ""
-                return .just(ListViewModel.ItemsModifyState.filteredByTag(searchTag))
+                return .just(.filteredByTag(searchTag))
+            }
+            .bind(to: viewModel.modifyItemsObservable)
+            .disposed(by: disposeBag)
+
+        menuView
+            .itemsOrderByDatePublishedButtonTapped
+            .flatMap { _ -> Observable<ListViewModel.ItemsModifyState> in
+                return .just(.orderedByDatePublished)
+            }
+            .bind(to: viewModel.modifyItemsObservable)
+            .disposed(by: disposeBag)
+
+        menuView
+            .itemsOrderByDateTakenButtonTapped
+            .flatMap { _ -> Observable<ListViewModel.ItemsModifyState> in
+                return .just(.orderedByDateTaken)
             }
             .bind(to: viewModel.modifyItemsObservable)
             .disposed(by: disposeBag)
@@ -102,12 +106,25 @@ final class ListViewController: UIViewController {
         switch state {
         case .present(let items):
             print("all tags: \(items.map {$0.tags})")
-            tableView.reloadData()
+            reloadData()
         case .loading:
             print("Loading")
         case .failed(let error):
-            print("error: \(error)")
+            presentErrorPopUp(withError: error)
         }
+    }
+
+    private func reloadData() {
+        UIView.transition(with: tableView,
+                          duration: 0.35,
+                          options: .transitionCrossDissolve,
+                          animations: { self.tableView.reloadData() })
+    }
+
+    private func presentErrorPopUp(withError error: Error) {
+        let alertController = UIAlertController(title: "Oooops", message: error.localizedDescription, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alertController, animated: true)
     }
 }
 
@@ -130,6 +147,14 @@ extension ListViewController: UITableViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         searchController.searchBar.resignFirstResponder()
+    }
+
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return menuView
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 150.0
     }
 }
 extension ListViewController: UITableViewDataSource {
