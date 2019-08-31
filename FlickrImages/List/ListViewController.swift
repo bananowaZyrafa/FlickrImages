@@ -6,6 +6,10 @@ final class ListViewController: UIViewController {
     private let viewModel: ListViewModelType
     private let disposeBag = DisposeBag()
 
+    private lazy var rightBarButtonItem: UIBarButtonItem = {
+        return UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: nil)
+    }()
+
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.contentInsetAdjustmentBehavior = .automatic
@@ -29,6 +33,7 @@ final class ListViewController: UIViewController {
     }()
 
     private let menuView = MenuView()
+    private var shouldShowMenu = false
 
     var didSelectFlickrItem: (FlickrItem) -> Void = { _ in }
 
@@ -52,6 +57,7 @@ final class ListViewController: UIViewController {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
         navigationItem.titleView = searchController.searchBar
+        navigationItem.rightBarButtonItem = rightBarButtonItem
         definesPresentationContext = true
     }
 
@@ -62,20 +68,21 @@ final class ListViewController: UIViewController {
             })
             .disposed(by: disposeBag)
 
-        searchController
-            .searchBar
-            .rx
-            .cancelButtonClicked
+        rightBarButtonItem.rx.tap.asDriver()
+            .drive(onNext: { [weak self] in
+                self?.shouldShowMenu.toggle()
+                self?.reloadData()
+            })
+            .disposed(by: disposeBag)
+
+        searchController.searchBar.rx.cancelButtonClicked
             .flatMap { _ -> Observable<ListViewModel.ItemsModifyState> in
                 return .just(ListViewModel.ItemsModifyState.filteredByTag(""))
             }
             .bind(to: viewModel.modifyItemsObservable)
             .disposed(by: disposeBag)
 
-        searchController
-            .searchBar
-            .rx
-            .text
+        searchController.searchBar.rx.text
             .debounce(.seconds(1), scheduler: MainScheduler.instance)
             .flatMap { tag -> Observable<ListViewModel.ItemsModifyState> in
                 var searchTag = ""
@@ -85,16 +92,14 @@ final class ListViewController: UIViewController {
             .bind(to: viewModel.modifyItemsObservable)
             .disposed(by: disposeBag)
 
-        menuView
-            .itemsOrderByDatePublishedButtonTapped
+        menuView.itemsOrderByDatePublishedButtonTapped
             .flatMap { _ -> Observable<ListViewModel.ItemsModifyState> in
                 return .just(.orderedByDatePublished)
             }
             .bind(to: viewModel.modifyItemsObservable)
             .disposed(by: disposeBag)
 
-        menuView
-            .itemsOrderByDateTakenButtonTapped
+        menuView.itemsOrderByDateTakenButtonTapped
             .flatMap { _ -> Observable<ListViewModel.ItemsModifyState> in
                 return .just(.orderedByDateTaken)
             }
@@ -154,7 +159,7 @@ extension ListViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 150.0
+        return shouldShowMenu ? 150.0 : 0.0
     }
 }
 extension ListViewController: UITableViewDataSource {
