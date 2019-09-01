@@ -25,6 +25,7 @@
 		C6DFA1FB230D686E00974F16 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6DFA1F9230D686E00974F16 /* LaunchScreen.storyboard */; };
 		C6DFA206230D686E00974F16 /* FlickrImagesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6DFA205230D686E00974F16 /* FlickrImagesTests.swift */; };
 		C6EA30042316F8AE0036732B /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6EA30032316F8AE0036732B /* MenuView.swift */; };
+		C6EA3006231AEDE60036732B /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6EA3005231AEDE60036732B /* UIView+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		C6DFA205230D686E00974F16 /* FlickrImagesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlickrImagesTests.swift; sourceTree = "<group>"; };
 		C6DFA207230D686E00974F16 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C6EA30032316F8AE0036732B /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
+		C6EA3005231AEDE60036732B /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		FABCA1AD0B12C6EB625482FA /* Pods_FlickrImagesTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FlickrImagesTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -111,14 +113,15 @@
 			path = Details;
 			sourceTree = "<group>";
 		};
-		C60FFDFB2311794000BA7E3E /* New Group */ = {
+		C60FFDFB2311794000BA7E3E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
 				C60FFDFC2311795B00BA7E3E /* DateFormatter+Extensions.swift */,
 				C60FFDFE2311840100BA7E3E /* UIViewController+Extensions.swift */,
 				C60FFE002311867200BA7E3E /* ReusableViewIdentifier.swift */,
+				C6EA3005231AEDE60036732B /* UIView+Extensions.swift */,
 			);
-			path = "New Group";
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		C6125FBC2311474B0096172A /* List */ = {
@@ -181,7 +184,7 @@
 		C6DFA1EF230D686D00974F16 /* FlickrImages */ = {
 			isa = PBXGroup;
 			children = (
-				C60FFDFB2311794000BA7E3E /* New Group */,
+				C60FFDFB2311794000BA7E3E /* Utils */,
 				C6DFA1F0230D686D00974F16 /* AppDelegate.swift */,
 				C60FFDF323115CAC00BA7E3E /* Coordinator */,
 				C6125FBC2311474B0096172A /* List */,
@@ -403,6 +406,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6EA3006231AEDE60036732B /* UIView+Extensions.swift in Sources */,
 				C60FFE012311867200BA7E3E /* ReusableViewIdentifier.swift in Sources */,
 				C6DFA1F3230D686D00974F16 /* ListViewController.swift in Sources */,
 				C6DFA1F1230D686D00974F16 /* AppDelegate.swift in Sources */,
