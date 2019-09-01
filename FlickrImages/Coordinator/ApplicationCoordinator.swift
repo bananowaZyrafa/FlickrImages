@@ -10,7 +10,6 @@ protocol Coordinator: class {
 class ApplicationCoordinator: Coordinator {
 
     private let disposeBag = DisposeBag()
-
     private let dependencies: Dependencies
 
     var rootViewController: UIViewController {
@@ -40,9 +39,9 @@ class ApplicationCoordinator: Coordinator {
         }
     }
 
-
     private func presentDetails(of item: FlickrItem) {
-        let detailsViewController = DetailsViewController()
+        let detailsViewController = DetailsViewController(flickrItem: item)
+        detailsViewController.view.backgroundColor = .white
         navigationController.pushViewController(detailsViewController, animated: true)
     }
 }

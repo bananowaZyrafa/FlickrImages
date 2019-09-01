@@ -109,8 +109,7 @@ final class ListViewController: UIViewController {
 
     private func render(with state: ListViewModel.State) {
         switch state {
-        case .present(let items):
-            print("all tags: \(items.map {$0.tags})")
+        case .present(_):
             reloadData()
         case .loading:
             print("Loading")
