@@ -210,10 +210,10 @@
 			isa = PBXGroup;
 			children = (
 				C6DFA205230D686E00974F16 /* FlickrImagesTests.swift */,
-				C6DFA207230D686E00974F16 /* Info.plist */,
-				C6EA300C231D39DA0036732B /* ValidTestResponse.json */,
 				C6EA3010231D3B820036732B /* FakeAPIClient.swift */,
+				C6EA300C231D39DA0036732B /* ValidTestResponse.json */,
 				C6EA3012231D5C590036732B /* InvalidTestResponse.json */,
+				C6DFA207230D686E00974F16 /* Info.plist */,
 			);
 			path = FlickrImagesTests;
 			sourceTree = "<group>";

@@ -55,7 +55,7 @@ final class ListViewModel: ListViewModelType {
 
     private let dependencies: Dependencies
 
-    init(dependencies: Dependencies) {
+    init(_ dependencies: Dependencies) {
         self.dependencies = dependencies
         prepareModificationObservable()
     }

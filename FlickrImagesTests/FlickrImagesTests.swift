@@ -6,6 +6,8 @@ import RxTest
 @testable import FlickrImages
 
 class FlickrImagesTests: XCTestCase {
+    private typealias Dependencies = ListViewModel.Dependencies
+
     var scheduler: TestScheduler!
     var disposeBag: DisposeBag!
 
@@ -20,8 +22,8 @@ class FlickrImagesTests: XCTestCase {
         disposeBag = DisposeBag()
         validAPIClient = FakeAPIClient(fileName: "ValidTestResponse")
         invalidAPIClient = FakeAPIClient(fileName: "InvalidTestResponse")
-        viewModelWithValidAPIClient = ListViewModel(dependencies: ListViewModel.Dependencies(networking: validAPIClient))
-        viewModelWithInvalidAPIClient = ListViewModel(dependencies: ListViewModel.Dependencies(networking: invalidAPIClient))
+        viewModelWithValidAPIClient = ListViewModel(Dependencies(networking: validAPIClient))
+        viewModelWithInvalidAPIClient = ListViewModel(Dependencies(networking: invalidAPIClient))
         super.setUp()
     }
 

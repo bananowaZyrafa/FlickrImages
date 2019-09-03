@@ -27,7 +27,7 @@ class ApplicationCoordinator: Coordinator {
         self.dependencies = dependencies
 
         let navigationController = UINavigationController()
-        let listViewModel = ListViewModel(dependencies: ListViewModel.Dependencies(networking: dependencies.apiClient))
+        let listViewModel = ListViewModel(ListViewModel.Dependencies(networking: dependencies.apiClient))
         let listViewController = ListViewController(viewModel: listViewModel)
 
         navigationController.viewControllers = [listViewController]
