@@ -14,13 +14,27 @@ final class ListViewModel: ListViewModelType {
     let modifyItemsObservable: BehaviorRelay<ListViewModel.ItemsModifyState> = BehaviorRelay(value: .filteredByTag(""))
     let state: BehaviorRelay<State> = BehaviorRelay(value: .present([]))
 
-    enum State {
+    enum State: Equatable {
+        static func == (lhs: ListViewModel.State, rhs: ListViewModel.State) -> Bool {
+            switch (lhs, rhs) {
+            case (.loading, .loading):
+                return true
+            case (.failed(_), .failed(_)):
+                return true
+            case (.present(_), .present(_)):
+                return true
+            default:
+                return false
+            }
+        }
+
         case loading
         case present([FlickrItem])
         case failed(Error)
+
     }
 
-    enum ItemsModifyState {
+    enum ItemsModifyState: Equatable {
         case filteredByTag(String)
         case orderedByDateTaken
         case orderedByDatePublished

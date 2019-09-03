@@ -1,34 +1,107 @@
-//
-//  FlickrImagesTests.swift
-//  FlickrImagesTests
-//
-//  Created by Paweł W. on 21/08/2019.
-//  Copyright © 2019 Bartosz.Wolinski. All rights reserved.
-//
-
 import XCTest
+import RxBlocking
+import RxCocoa
+import RxSwift
+import RxTest
 @testable import FlickrImages
 
 class FlickrImagesTests: XCTestCase {
+    var scheduler: TestScheduler!
+    var disposeBag: DisposeBag!
+
+    var validAPIClient: APIClientType!
+    var invalidAPIClient: APIClientType!
+
+    var viewModelWithValidAPIClient:  ListViewModelType!
+    var viewModelWithInvalidAPIClient: ListViewModelType!
 
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        scheduler = TestScheduler(initialClock: 0)
+        disposeBag = DisposeBag()
+        validAPIClient = FakeAPIClient(fileName: "ValidTestResponse")
+        invalidAPIClient = FakeAPIClient(fileName: "InvalidTestResponse")
+        viewModelWithValidAPIClient = ListViewModel(dependencies: ListViewModel.Dependencies(networking: validAPIClient))
+        viewModelWithInvalidAPIClient = ListViewModel(dependencies: ListViewModel.Dependencies(networking: invalidAPIClient))
+        super.setUp()
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        scheduler = nil
+        disposeBag = nil
+        validAPIClient = nil
+        invalidAPIClient = nil
+        viewModelWithInvalidAPIClient = nil
+        viewModelWithValidAPIClient = nil
+        super.tearDown()
     }
 
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testResponseInvalidity() {
+        XCTAssertThrowsError(try invalidAPIClient.fetchDefaultList().toBlocking().first())
     }
 
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    func testResponseValidity() {
+        XCTAssertNotNil(try validAPIClient.fetchDefaultList().toBlocking().first())
+        XCTAssert(try validAPIClient.fetchDefaultList().toBlocking().first()!.count > 0)
+    }
+
+    func testViewModelValidity() {
+        viewModelWithValidAPIClient.loadDefaultList()
+        let actualState = viewModelWithValidAPIClient.state.value
+
+        if case let .present(items) = actualState {
+            XCTAssertEqual(actualState, .present([]))
+            XCTAssert(items.count > 0)
+        } else {
+            XCTFail()
         }
     }
 
+    func testViewModelInvalidity() {
+        viewModelWithInvalidAPIClient.loadDefaultList()
+        let actualState = viewModelWithInvalidAPIClient.state.value
+        XCTAssertEqual(actualState, ListViewModel.State.failed(FakeAPIClient.FakeAPIError.JSONSerializationError))
+    }
+
+    func testValidViewModelFilterTags() {
+        let filterTagsObservable: Driver<String> = .just("test")
+        viewModelWithValidAPIClient.loadDefaultList()
+        filterTagsObservable
+            .flatMap { (tag: String) -> Driver<ListViewModel.ItemsModifyState> in
+                return .just(.filteredByTag(tag))
+            }
+            .drive(viewModelWithValidAPIClient.modifyItemsObservable)
+            .disposed(by: disposeBag)
+
+        let flickrItems = viewModelWithValidAPIClient.flickrItems.map{$0.tags}
+        print(flickrItems)
+        XCTAssert(viewModelWithValidAPIClient.flickrItems.map{$0.tags}.contains("test"))
+    }
+
+    func testValidViewModelSortByDateTaken() {
+        let sortByDateTakenObservable: Driver<Void> = .just(())
+        viewModelWithValidAPIClient.loadDefaultList()
+        sortByDateTakenObservable.flatMap { _ -> Driver<ListViewModel.ItemsModifyState> in
+            return .just(.orderedByDateTaken)
+        }
+        .drive(viewModelWithValidAPIClient.modifyItemsObservable)
+        .disposed(by: disposeBag)
+
+        let actualState = viewModelWithValidAPIClient.modifyItemsObservable.value
+
+        XCTAssertEqual(actualState, ListViewModel.ItemsModifyState.orderedByDateTaken)
+    }
+
+    func testValidViewModelSortByDatePublished() {
+        let sortByDatePublishedObservable: Driver<Void> = .just(())
+        viewModelWithValidAPIClient.loadDefaultList()
+        sortByDatePublishedObservable.flatMap { _ -> Driver<ListViewModel.ItemsModifyState> in
+            return .just(.orderedByDatePublished)
+            }
+            .drive(viewModelWithValidAPIClient.modifyItemsObservable)
+            .disposed(by: disposeBag)
+
+        let actualState = viewModelWithValidAPIClient.modifyItemsObservable.value
+
+        XCTAssertEqual(actualState, ListViewModel.ItemsModifyState.orderedByDatePublished)
+    }
 }
